@@ -1,0 +1,39 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base"],
+  "packageRules": [
+    {
+      "matchPackagePatterns": [".*"],
+      "matchManagers": ["composer"],
+      "groupName": "All Dependencies",
+      "groupSlug": "all-dependencies",
+      "schedule": ["at any time"]
+    },
+    {
+      "matchPackagePatterns": ["^php"],
+      "groupName": "PHP Version",
+      "separateMinorPatch": true
+    },
+    {
+      "matchPackageNames": ["oblak/transliterator", "symfony/polyfill-php84"],
+      "groupName": "Core Dependencies",
+      "separateMinorPatch": true
+    },
+    {
+      "matchPackagePatterns": [
+        "phpstan/*",
+        "phpunit/*",
+        "oblak/wordpress-coding-standard"
+      ],
+      "groupName": "Development Dependencies",
+      "separateMinorPatch": true,
+      "automerge": true,
+      "schedule": ["before 8am on Monday"]
+    }
+  ],
+  "automerge": false,
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "rebaseWhen": "auto",
+  "stabilityDays": 3
+}
