@@ -1,9 +1,19 @@
 <?php
 
+/**
+ * Dictionary interface file.
+ *
+ * @package    Vocative
+ * @subpackage Interfaces
+ */
+
 namespace Oblak\Vocative\Interfaces;
 
 use Stringable;
 
+/**
+ * Describes the interface for a dictionary
+ */
 interface Dictionary
 {
     /**

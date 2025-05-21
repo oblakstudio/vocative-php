@@ -15,6 +15,11 @@ class Vocative
     public const SOURCE_ALGORITHM  = 'algorithm';
     public const SOURCE_DICTIONARY = 'dictionary';
 
+    /**
+     * Mapping of suffix patterns to their replacements with minimum length requirements
+     *
+     * @var array<string, array<string, int>>
+     */
     private const SUFFIX_RULES = [
         'ICA'  => [ 'ICE' => 4 ],
         'TRA'  => [ 'TRA' => 0 ],
@@ -74,8 +79,18 @@ class Vocative
      */
     private ?string $source = null;
 
+    /**
+     * Original nominative form of the name
+     *
+     * @var string|null
+     */
     private ?string $nominative = null;
 
+    /**
+     * Computed vocative form of the name
+     *
+     * @var string|null
+     */
     private ?string $vocative = null;
 
     /**
@@ -95,6 +110,12 @@ class Vocative
         $this->dictionary = $dictionary ?? new BaseDictionary();
     }
 
+    /**
+     * Set a custom dictionary for name exceptions
+     *
+     * @param Dictionary $dictionary Custom dictionary implementation
+     * @return static Current instance for method chaining
+     */
     public function withDictionary(Dictionary $dictionary): static
     {
         $this->dictionary = $dictionary;
@@ -102,6 +123,11 @@ class Vocative
         return $this;
     }
 
+    /**
+     * Get the current dictionary instance
+     *
+     * @return Dictionary Current dictionary implementation
+     */
     public function getDictionary(): Dictionary
     {
         return $this->dictionary;
@@ -134,6 +160,12 @@ class Vocative
             ->finalize();
     }
 
+    /**
+     * Initialize object state for processing a new name
+     *
+     * @param string $nominative Name in nominative case
+     * @return static Current instance for method chaining
+     */
     private function initialize(string $nominative): static
     {
         $this->nominative = $nominative;
@@ -145,6 +177,12 @@ class Vocative
         return $this;
     }
 
+    /**
+     * Check if name exists in the dictionary of exceptions
+     *
+     * @param bool $ignoreDict Whether to ignore the dictionary lookup
+     * @return static Current instance for method chaining
+     */
     private function checkException(bool $ignoreDict): static
     {
         if (!$ignoreDict && $this->dictionary->hasName($this->nominative)) {
@@ -155,6 +193,11 @@ class Vocative
         return $this;
     }
 
+    /**
+     * Transform nominative to vocative form using appropriate rules
+     *
+     * @return static Current instance for method chaining
+     */
     private function transform(): static
     {
         if ($this->done) {
@@ -173,6 +216,11 @@ class Vocative
         };
     }
 
+    /**
+     * Determine which suffix rule applies to the current name
+     *
+     * @return string The matching suffix rule or empty string if none matches
+     */
     private function getRule(): string
     {
         foreach (\array_keys(self::SUFFIX_RULES) as $suffix) {
@@ -184,6 +232,12 @@ class Vocative
         return '';
     }
 
+    /**
+     * Apply transformation rules for names ending with 'JA'
+     * Handles special exclusions that don't follow the standard pattern
+     *
+     * @return static Current instance for method chaining
+     */
     private function transformJa(): static
     {
         foreach (self::JA_EXCLUSIONS as $exclusion) {
@@ -195,6 +249,12 @@ class Vocative
         return $this->transformDefault('JA');
     }
 
+    /**
+     * Apply transformation rules for names ending with 'KA'
+     * Length-dependent rules determine the proper replacement
+     *
+     * @return static Current instance for method chaining
+     */
     private function transformKa(): static
     {
         $nominative = $this->nominative;
@@ -209,6 +269,12 @@ class Vocative
         return $this->setVocative($nominative);
     }
 
+    /**
+     * Apply default transformation rules based on the identified suffix
+     *
+     * @param string $suffix The suffix rule to apply
+     * @return static Current instance for method chaining
+     */
     private function transformDefault(string $suffix): static
     {
         $nominative = $this->nominative;
@@ -228,6 +294,12 @@ class Vocative
         return $this->transformSpecial();
     }
 
+    /**
+     * Apply special transformation rules for cases not handled by suffix rules
+     * Handles special consonant endings, vowel endings, and default case
+     *
+     * @return static Current instance for method chaining
+     */
     private function transformSpecial(): static
     {
         $nominative = $this->nominative;
@@ -248,6 +320,12 @@ class Vocative
         return $this->setVocative($nominative . 'E');
     }
 
+    /**
+     * Set the vocative form and mark processing as complete
+     *
+     * @param string $vocative The final vocative form
+     * @return static Current instance for method chaining
+     */
     private function setVocative(string $vocative): static
     {
         $this->vocative = $vocative;
@@ -256,6 +334,13 @@ class Vocative
         return $this;
     }
 
+    /**
+     * Check if a text ends with a specific suffix
+     *
+     * @param string $text The text to check
+     * @param string $suffix The suffix to match against
+     * @return bool True if the text ends with the suffix
+     */
     private function matchSuffix(string $text, string $suffix): bool
     {
         return \mb_substr($text, -\mb_strlen($suffix)) === $suffix;
@@ -278,7 +363,8 @@ class Vocative
     /**
      * Normalize and clean input text
      *
-     * @param string $input Input text
+     * @param string|null $input Input text (uses nominative if null)
+     * @return static Current instance for method chaining
      */
     private function normalizeInput(?string $input = null): static
     {
