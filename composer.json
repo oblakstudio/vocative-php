@@ -11,9 +11,8 @@
   ],
   "require": {
     "php": ">= 8.0",
-    "ext-mbstring": "*",
     "oblak/transliterator": "^3.0",
-    "symfony/polyfill-php84": "^1.31"
+    "symfony/polyfill-mbstring": "^1.33"
   },
   "require-dev": {
     "oblak/wordpress-coding-standard": "^1.1",
