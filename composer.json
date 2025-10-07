@@ -17,8 +17,8 @@
   "require-dev": {
     "oblak/wordpress-coding-standard": "^1.1",
     "phpstan/extension-installer": "^1.3",
-    "phpstan/phpstan": "^1.10",
-    "phpunit/phpunit": "^9"
+    "phpstan/phpstan": "^2.0",
+    "phpunit/phpunit": "^12"
   },
   "autoload": {
     "psr-4": {
